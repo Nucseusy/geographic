@@ -1,7 +1,12 @@
 package com.br.microservice.geographic.data;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class Zone {
-    private float id;
+    private Integer id;
     private String nome;
-    MicroRegion microrregiao;
+    private MicroRegion microrregiao;
 }

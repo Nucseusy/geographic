@@ -1,8 +1,13 @@
 package com.br.microservice.geographic.data;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class FederativeUnity {
-    private float id;
+    private Integer id;
     private String sigla;
     private String nome;
-    Region regiao;
+    private Region regiao;
 }

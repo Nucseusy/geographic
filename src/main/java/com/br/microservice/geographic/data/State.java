@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class State {
     @ApiModelProperty(value = "Identificador da Unidade da Federação")
-    private long id;
+    private Integer id;
 
     @ApiModelProperty(value = "Nome da Unidade da Federação")
    // @JsonProperty(value = "sigla")

@@ -1,7 +1,11 @@
 package com.br.microservice.geographic.data;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class MesoRegion {
-    private float id;
+    private Integer id;
     private String nome;
-    FederativeUnity UF;
 }
