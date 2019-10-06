@@ -30,7 +30,9 @@ public class LocalidadeService implements ILocalidadeService {
 
     @Override
     @Cacheable(cacheNames = "states")
-    @HystrixCommand(fallbackMethod = "defaultState")
+    @HystrixCommand(fallbackMethod = "defaultState", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.strategy", value = "SEMAPHORE")
+    })
     public List<State> findAllStates() {
         LOGGER.info("findAllStates processing...");
         List<State> list = getApi(_uriState, HttpMethod.POST, null, new ParameterizedTypeReference<List<State>>() {
@@ -41,8 +43,8 @@ public class LocalidadeService implements ILocalidadeService {
     @Override
     @Cacheable(value = "zonesbystate", key = "#ufId")
     @HystrixCommand(fallbackMethod = "defaultZoneByState", commandProperties = {
-            @HystrixProperty(name="execution.isolation.strategy", value="SEMAPHORE")
-    })
+            @HystrixProperty(name = "execution.isolation.strategy", value = "SEMAPHORE"),
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000")})
     public List<Zone> findZonesByState(Integer ufId) {
         List<Zone> zones = getApi(_uriZone, HttpMethod.POST, null, new ParameterizedTypeReference<List<Zone>>() {
         }, ufId);
