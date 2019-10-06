@@ -12,5 +12,4 @@ public class GeographicApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }

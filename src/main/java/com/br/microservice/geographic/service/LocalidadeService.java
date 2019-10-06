@@ -11,15 +11,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
+import javax.inject.Named;
+
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Service
+@Named
 public class LocalidadeService implements ILocalidadeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalidadeService.class);
 
@@ -30,6 +30,7 @@ public class LocalidadeService implements ILocalidadeService {
     private String _uriZone;
 
     @Override
+    @Cacheable(cacheNames="states")
     public List<State> findAllStates() {
         LOGGER.info("findAllStates processing...");
         List<State> list = getApi(_uriState, HttpMethod.POST, null, new ParameterizedTypeReference<List<State>>() {
@@ -38,15 +39,16 @@ public class LocalidadeService implements ILocalidadeService {
     }
 
     @Override
+    @Cacheable(value = "zonesbystate", key = "#ufId")
     public List<Zone> findZonesByState(Integer ufId) {
-        LOGGER.info("findZonesByState init process > " + ufId);
-
         List<Zone> zones = getApi(_uriZone, HttpMethod.POST, null, new ParameterizedTypeReference<List<Zone>>() {
         }, ufId);
+        LOGGER.info("State: " + ufId);
         return zones;
     }
 
     @Override
+    @Cacheable("locales")
     public List<Locale> findAllLocalidade() {
         LOGGER.info("findAllLocalidade init process...");
         List<Locale> locales = new ArrayList<>();
@@ -65,7 +67,8 @@ public class LocalidadeService implements ILocalidadeService {
     }
 
     @Override
-    public Locale findLocalidadeByName(String name) throws BreakForEachException {
+    @Cacheable(value = "localesbyname", key = "#name")
+    public Locale findLocalidadeByName(String name) {
         LOGGER.info("findLocalidadeByName init process...");
         List<Locale> locale = new ArrayList<>();
         try {
