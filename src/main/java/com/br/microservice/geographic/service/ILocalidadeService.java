@@ -3,6 +3,7 @@ package com.br.microservice.geographic.service;
 import com.br.microservice.geographic.data.Locale;
 import com.br.microservice.geographic.data.State;
 import com.br.microservice.geographic.data.Zone;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface ILocalidadeService {
 
     List<Zone> findZonesByState(Integer ufId);
 
-    List<Locale> findAllLocalidade();
+    ResponseEntity<List<Locale>> findAllLocalidade();
 
     Locale findLocalidadeByName(String name) ;
 }

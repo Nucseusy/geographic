@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Named;
@@ -53,7 +55,7 @@ public class LocalidadeService implements ILocalidadeService {
 
     @Override
     @Cacheable("locales")
-    public List<Locale> findAllLocalidade() {
+    public ResponseEntity<List<Locale>> findAllLocalidade() {
         LOGGER.info("findAllLocalidade init process...");
         List<Locale> locales = new ArrayList<>();
 
@@ -67,7 +69,7 @@ public class LocalidadeService implements ILocalidadeService {
 
         LOGGER.info("findAllLocalidade finish process...");
 
-        return locales;
+        return new ResponseEntity<>(locales, HttpStatus.OK);
     }
 
     @Override
