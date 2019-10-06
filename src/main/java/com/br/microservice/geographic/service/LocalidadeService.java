@@ -1,11 +1,9 @@
 package com.br.microservice.geographic.service;
 
-import com.br.microservice.geographic.data.Locale;
-import com.br.microservice.geographic.data.Region;
-import com.br.microservice.geographic.data.State;
-import com.br.microservice.geographic.data.Zone;
+import com.br.microservice.geographic.data.*;
 import com.br.microservice.geographic.exception.BreakForEachException;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +40,9 @@ public class LocalidadeService implements ILocalidadeService {
 
     @Override
     @Cacheable(value = "zonesbystate", key = "#ufId")
+    @HystrixCommand(fallbackMethod = "defaultZoneByState", commandProperties = {
+            @HystrixProperty(name="execution.isolation.strategy", value="SEMAPHORE")
+    })
     public List<Zone> findZonesByState(Integer ufId) {
         List<Zone> zones = getApi(_uriZone, HttpMethod.POST, null, new ParameterizedTypeReference<List<Zone>>() {
         }, ufId);
@@ -76,10 +77,12 @@ public class LocalidadeService implements ILocalidadeService {
             List<State> states = findAllStates();
             states.stream().forEach(state -> {
                 List<Zone> zones = findZonesByState(state.getId());
-                Optional<Zone> zone = zones.stream().filter(obj -> obj.getNome().equals(name)).findAny();
-                if (zone.isPresent()) {
-                    locale.add(buildLocale(zone.get(), state));
-                    throw new BreakForEachException("Locale found > " + zone.get().getNome());
+                if (!zones.isEmpty()) {
+                    Optional<Zone> zone = zones.stream().filter(obj -> obj.getNome().equals(name)).findAny();
+                    if (zone.isPresent()) {
+                        locale.add(buildLocale(zone.get(), state));
+                        throw new BreakForEachException("Locale found > " + zone.get().getNome());
+                    }
                 }
             });
         } catch (BreakForEachException e) {
@@ -119,13 +122,31 @@ public class LocalidadeService implements ILocalidadeService {
                 .id(35)
                 .nome("São Paulo")
                 .sigla("SP")
-               .regiao(Region.builder()
-                       .id(3)
-                       .nome("Sudeste")
-                       .sigla("SE")
-                       .build())
+                .regiao(Region.builder()
+                        .id(3)
+                        .nome("Sudeste")
+                        .sigla("SE")
+                        .build())
                 .build()
         );
         return state;
+    }
+
+    public List<Zone> defaultZoneByState(Integer ufId) {
+        List<Zone> zone = new ArrayList<>();
+        zone.add(Zone.builder()
+                .id(3550308)
+                .nome("São Paulo")
+                .microrregiao(MicroRegion.builder()
+                        .id(35061)
+                        .nome("São Paulo")
+                        .mesorregiao(MesoRegion.builder()
+                                .id(3515)
+                                .nome("Metropolitana de São Paulo")
+                                .build())
+                        .build())
+                .build()
+        );
+        return zone;
     }
 }
