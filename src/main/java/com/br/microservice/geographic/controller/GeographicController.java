@@ -1,7 +1,6 @@
 package com.br.microservice.geographic.controller;
 
 import com.br.microservice.geographic.data.Locale;
-import com.br.microservice.geographic.exception.BreakForEachException;
 import com.br.microservice.geographic.service.LocalidadeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,15 +9,12 @@ import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
-import java.util.LinkedList;
+import java.io.OutputStream;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/v1/br/localidade")
@@ -39,12 +35,10 @@ public class GeographicController {
     }
     )
     public ResponseEntity<Locale> getLocaleByName(@PathVariable("name") String name) {
-        LOGGER.info("Processing find by name... ");
+        LOGGER.info("Processing find by name... " + name);
         Locale locale = localidadeService.findLocalidadeByName(name);
 
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePrivate())
-                .body(locale);
+        return new ResponseEntity<>(locale, HttpStatus.OK);
     }
 
     @GetMapping("/download/csv")
@@ -58,26 +52,27 @@ public class GeographicController {
     )
     public OutputStream getFileCsv() {
         LOGGER.info("Creating file object ... ");
-        List<Integer> output = new LinkedList<>();
-        OutputStream outputStream = new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                output.add(b);
-            }
-        };
-
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-        // write all the things via CsvBuilder
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(new InputStream() {
-            @Override
-            public int read() throws IOException {
-                if (output.size() > 0) {
-                    return output.remove(0);
-                }
-                return -1;
-            }
-        }));
-        LOGGER.info("Returning file... ");
+        List<Locale> output = localidadeService.findAllLocalidade();
+        OutputStream outputStream = null;
+//        OutputStream outputStream = new OutputStream() {
+//            @Override
+//            public void write(Locale b) throws IOException {
+//                output.add(b);
+//            }
+//        };
+//
+//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+//        // write all the things via CsvBuilder
+//        final BufferedReader reader = new BufferedReader(new InputStreamReader(new InputStream() {
+//            @Override
+//            public int read() throws IOException {
+//                if (output.size() > 0) {
+//                    return output.remove(0);
+//                }
+//                return -1;
+//            }
+//        }));
+//        LOGGER.info("Returning file... ");
         return outputStream;
     }
 

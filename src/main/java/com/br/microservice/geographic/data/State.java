@@ -1,11 +1,15 @@
 package com.br.microservice.geographic.data;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class State {
     @ApiModelProperty(value = "Identificador da Unidade da Federação")
     private Integer id;

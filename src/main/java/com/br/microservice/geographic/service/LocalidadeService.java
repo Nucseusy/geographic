@@ -1,9 +1,11 @@
 package com.br.microservice.geographic.service;
 
 import com.br.microservice.geographic.data.Locale;
+import com.br.microservice.geographic.data.Region;
 import com.br.microservice.geographic.data.State;
 import com.br.microservice.geographic.data.Zone;
 import com.br.microservice.geographic.exception.BreakForEachException;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,10 +13,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import javax.inject.Named;
-
 import org.springframework.web.client.RestTemplate;
 
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,8 @@ public class LocalidadeService implements ILocalidadeService {
     private String _uriZone;
 
     @Override
-    @Cacheable(cacheNames="states")
+    @Cacheable(cacheNames = "states")
+    @HystrixCommand(fallbackMethod = "defaultState")
     public List<State> findAllStates() {
         LOGGER.info("findAllStates processing...");
         List<State> list = getApi(_uriState, HttpMethod.POST, null, new ParameterizedTypeReference<List<State>>() {
@@ -43,7 +45,6 @@ public class LocalidadeService implements ILocalidadeService {
     public List<Zone> findZonesByState(Integer ufId) {
         List<Zone> zones = getApi(_uriZone, HttpMethod.POST, null, new ParameterizedTypeReference<List<Zone>>() {
         }, ufId);
-        LOGGER.info("State: " + ufId);
         return zones;
     }
 
@@ -110,5 +111,21 @@ public class LocalidadeService implements ILocalidadeService {
                 .nomeMesorregiao(zone.getMicrorregiao().getMesorregiao().getNome())
                 .nomeFormatado(zone.getNome().concat("/").concat(state.getSigla()))
                 .build();
+    }
+
+    public List<State> defaultState() {
+        List<State> state = new ArrayList<>();
+        state.add(State.builder()
+                .id(35)
+                .nome("São Paulo")
+                .sigla("SP")
+               .regiao(Region.builder()
+                       .id(3)
+                       .nome("Sudeste")
+                       .sigla("SE")
+                       .build())
+                .build()
+        );
+        return state;
     }
 }
