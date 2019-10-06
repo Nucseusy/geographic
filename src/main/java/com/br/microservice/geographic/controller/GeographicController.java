@@ -3,6 +3,7 @@ package com.br.microservice.geographic.controller;
 import com.br.microservice.geographic.data.Locale;
 import com.br.microservice.geographic.data.State;
 import com.br.microservice.geographic.data.Zone;
+import com.br.microservice.geographic.exception.BreakForEachException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,9 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/v1/br/localidade")
@@ -45,13 +45,23 @@ public class GeographicController {
             @ApiResponse(code = 302, message = "Sucesso!")
     }
     )
-    public Locale getLocaleByName(@PathVariable("name") String name) {
+    public ResponseEntity<Locale> getLocaleByName(@PathVariable("name") String name) {
+        Locale locale = null;
+        List<Locale> locales = new ArrayList<>();
         LOGGER.info("Creating locale object ... ");
+        try {
+            getLocaleList(name, locales);
+        } catch (BreakForEachException be) {
+            LOGGER.info(be.getLocalizedMessage());
+        }
 
-        List<Locale> locales = getLocaleList(name);
-
+        if (locales != null && !locales.isEmpty()) {
+            locale = locales.get(0);
+        }
         LOGGER.info("Returning locale... ");
-        return locales != null && !locales.isEmpty() ? locales.get(0) : null;
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePrivate())
+                .body(locale);
     }
 
     @GetMapping("/download/csv")
@@ -113,24 +123,6 @@ public class GeographicController {
         }
     }
 
-    private List<Locale> mapperLocale(List<Zone> zones, State state, String name) {
-        List<Locale> locales = new ArrayList<>();
-        if (name != null && !name.isEmpty()) {
-            Optional<Zone> zone = zones.stream().filter(obj -> obj.getNome().equals(name)).findAny();
-            if (zone.isPresent())
-                locales.add(buildLocale(zone.get(), state));
-        } else {
-            zones.stream().forEach(zone -> {
-                try {
-                    locales.add(buildLocale(zone, state));
-                } catch (Exception e) {
-                    LOGGER.error(e.getLocalizedMessage());
-                }
-            });
-        }
-        return locales;
-    }
-
     private Locale buildLocale(Zone zone, State state) {
         return Locale.builder()
                 .idEstado(state.getId())
@@ -142,9 +134,7 @@ public class GeographicController {
                 .build();
     }
 
-    private List<Locale> getLocaleList(String name){
-        List<Locale> locales = new ArrayList<>();
-
+    private List<Locale> getLocaleList(String name, List<Locale> locales) {
         List<State> list = getApi(_uriState, HttpMethod.POST, null, new ParameterizedTypeReference<List<State>>() {
         }, null);
 
@@ -152,10 +142,25 @@ public class GeographicController {
             List<Zone> zones = getApi(_uriZone, HttpMethod.POST, null, new ParameterizedTypeReference<List<Zone>>() {
             }, state.getId());
 
-            if (!zones.isEmpty())
-                locales.addAll(mapperLocale(zones, state, name));
-
-            LOGGER.info("Processing state > " + state.getId());
+            if (!zones.isEmpty()) {
+                if (name != null && !name.isEmpty()) {
+                    Optional<Zone> zone = zones.stream().filter(obj -> obj.getNome().equals(name)).findAny();
+                    if (zone.isPresent()) {
+                        locales.add(buildLocale(zone.get(), state));
+                        LOGGER.info("Locale > " + zone.get().getNome());
+                        throw new BreakForEachException("Locale found");
+                    }
+                } else {
+                    zones.stream().forEach(zone -> {
+                        try {
+                            locales.add(buildLocale(zone, state));
+                        } catch (Exception e) {
+                            LOGGER.error(e.getLocalizedMessage());
+                        }
+                    });
+                }
+                LOGGER.info("Processing state > " + state.getId());
+            }
         });
 
         return locales;
