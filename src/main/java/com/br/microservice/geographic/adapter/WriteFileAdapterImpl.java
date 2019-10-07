@@ -40,17 +40,17 @@ public class WriteFileAdapterImpl implements IWriteFileAdapter {
 
     @Override
     public OutputStream getXML(HttpServletResponse response, List<Locale> locales) throws Exception {
-        OutputStream out = getHeader(response, EnumFile.XML.getcontextType(), "download-xml-localidades.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <root> \n");
-        File.FileBuilder file = writeFile.getFile();
-        file.footer("</root>")
-                .separator("\n")
-                .initialTagDecorator("<%s>")
-                .finalTagDecorator("</%s>")
-                .initialBlock("<element>")
-                .finishBlock("</element>")
-                .blockSeparator("\n");
-
-        return converter(out, locales, file.build());
+//        OutputStream out = getHeader(response, EnumFile.XML.getcontextType(), "download-xml-localidades.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>");
+//        File.FileBuilder file = writeFile.getFile();
+//        file.footer("</root>")
+//                .separator("\n")
+//                .initialTagDecorator("        <%s>")
+//                .finalTagDecorator("</%s>")
+//                .initialBlock("    <element>\n")
+//                .finishBlock("\n    </element>");
+//
+//        return converter(out, locales, file.build());
+        return null;
     }
 
     private OutputStream getHeader(HttpServletResponse response, String contentType, String fileName, String header) throws IOException {
@@ -81,12 +81,12 @@ public class WriteFileAdapterImpl implements IWriteFileAdapter {
             if (file.getInitialBlock() != null)
                 out.write(file.getInitialBlock().getBytes(charset));
 
-            getTag(out, String.format(getTagDecorator(locale.getIdEstado(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "idEstado"), separator);
-            getTag(out, String.format(getTagDecorator(locale.getSiglaEstado(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "siglaEstado"), separator);
-            getTag(out, String.format(getTagDecorator(locale.getRegiaoNome(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "regiaoNome"), separator);
-            getTag(out, String.format(getTagDecorator(locale.getNomeCidade(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "nomeCidade"), separator);
-            getTag(out, String.format(getTagDecorator(locale.getNomeMesorregiao(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "nomeMesorregiao"), separator);
-            getTag(out, String.format(getTagDecorator(locale.getNomeFormatado(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "nomeFormatado"), null);
+            getTag(out, String.format(getTagDecorator(locale.getIdEstado(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "idEstado", "idEstado"), separator);
+            getTag(out, String.format(getTagDecorator(locale.getSiglaEstado(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "siglaEstado", "siglaEstado"), separator);
+            getTag(out, String.format(getTagDecorator(locale.getRegiaoNome(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "regiaoNome", "regiaoNome"), separator);
+            getTag(out, String.format(getTagDecorator(locale.getNomeCidade(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "nomeCidade", "nomeCidade"), separator);
+            getTag(out, String.format(getTagDecorator(locale.getNomeMesorregiao(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "nomeMesorregiao", "nomeMesorregiao"), separator);
+            getTag(out, String.format(getTagDecorator(locale.getNomeFormatado(), file.getInitialTagDecorator(), file.getFinalTagDecorator()), "nomeFormatado", "nomeFormatado"), null);
 
             if (file.getFinishBlock() != null) {
                 out.write(file.getFinishBlock().getBytes(charset));

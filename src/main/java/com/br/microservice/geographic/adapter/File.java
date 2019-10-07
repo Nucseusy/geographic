@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class File {
 
-//    private String filesName;
-
-//    private String header;
-
     private String footer;
 
     private String separator;
@@ -26,8 +22,6 @@ public class File {
     private String initialBlock;
 
     private String finishBlock;
-//
-//    private String contentType;
 
     private String blockSeparator;
 }
