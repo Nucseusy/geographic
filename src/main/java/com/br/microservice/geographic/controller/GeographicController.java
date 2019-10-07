@@ -55,17 +55,8 @@ public class GeographicController {
     )
     public OutputStream getFileCsv(HttpServletResponse response, @PathVariable("type") String type) throws Exception {
         ResponseEntity<List<Locale>> locales = localidadeService.findAllLocalidade();
-        IGenericFile genericFile = null;
-        if (type.equals(EnumFile.CSV.name())) {
-            genericFile = new CSVFile("download-csv-localidades.csv", "idEstado,siglaEstado,regiaoNome,nomeCidade,nomeMesorregiao,nomeFormatado");
-        } else if (type.equals(EnumFile.JSON.name())){
-            genericFile = new JSONFile("download-json-localidades.json");
-        } else if (type.equals(EnumFile.XML.name())){
-            // desenvolver
-        }
-
-        File file = new AdapterFile(genericFile);
-        OutputStream out = file.getOutputStream(response, locales.getBody());
+        IWriteFileAdapter fileAdapter = new WriteFileAdapterImpl();
+        OutputStream out = getFile(fileAdapter, type, response, locales.getBody());
         return out;
     }
 
@@ -81,5 +72,14 @@ public class GeographicController {
     )
     public ResponseEntity<List<Locale>> getFileJson() {
         return Postconditions.checkNull(localidadeService.findAllLocalidade());
+    }
+
+    private OutputStream getFile(IWriteFileAdapter fileAdapter, String type, HttpServletResponse response, List<Locale> locales) throws Exception {
+        switch (type){
+            case "CSV": return fileAdapter.getCsv(response, locales);
+            case "JSON": return fileAdapter.getJson(response, locales);
+            case "XML": return fileAdapter.getXML(response, locales);
+            default: return fileAdapter.getCsv(response, locales);
+        }
     }
 }

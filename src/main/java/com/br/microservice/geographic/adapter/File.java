@@ -1,11 +1,33 @@
 package com.br.microservice.geographic.adapter;
 
-import com.br.microservice.geographic.data.Locale;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.util.List;
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class File {
 
-public interface File {
-    OutputStream getOutputStream(HttpServletResponse response, List<Locale> locales) throws Exception;
+//    private String filesName;
+
+//    private String header;
+
+    private String footer;
+
+    private String separator;
+
+    private String initialTagDecorator;
+
+    private String finalTagDecorator;
+
+    private String initialBlock;
+
+    private String finishBlock;
+//
+//    private String contentType;
+
+    private String blockSeparator;
 }
