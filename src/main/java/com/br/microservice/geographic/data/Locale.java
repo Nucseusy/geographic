@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Locale {
-    private Integer idEstado;
+    private String idEstado;
     private String siglaEstado;
     private String regiaoNome;
     private String nomeCidade;

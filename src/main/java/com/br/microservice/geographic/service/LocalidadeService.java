@@ -111,7 +111,7 @@ public class LocalidadeService implements ILocalidadeService {
 
     private Locale buildLocale(Zone zone, State state) {
         return Locale.builder()
-                .idEstado(state.getId())
+                .idEstado(String.valueOf(state.getId()))
                 .siglaEstado(state.getSigla())
                 .regiaoNome(state.getRegiao().getNome())
                 .nomeCidade(zone.getNome())

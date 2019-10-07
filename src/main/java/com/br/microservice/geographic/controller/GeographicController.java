@@ -1,11 +1,9 @@
 package com.br.microservice.geographic.controller;
 
+import com.br.microservice.geographic.adapter.*;
 import com.br.microservice.geographic.data.Locale;
 import com.br.microservice.geographic.exception.Postconditions;
 import com.br.microservice.geographic.service.LocalidadeService;
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -13,12 +11,12 @@ import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.List;
 
 @RestController
@@ -46,7 +44,7 @@ public class GeographicController {
         return new ResponseEntity<>(locale, HttpStatus.OK);
     }
 
-    @GetMapping("/download/csv")
+    @GetMapping("/download/{type}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Retorna todos os dados da localidade como um arquivo CSV")
     @ApiResponses(value = {
@@ -55,28 +53,24 @@ public class GeographicController {
             @ApiResponse(code = 302, message = "Sucesso!")
     }
     )
-    public void getFileCsv (HttpServletResponse response) throws Exception {
+    public OutputStream getFileCsv(HttpServletResponse response, @PathVariable("type") String type) throws Exception {
         ResponseEntity<List<Locale>> locales = localidadeService.findAllLocalidade();
-        //set file name and content type
-        String filename = "download-csv-localidades.csv";
+        IGenericFile genericFile = null;
+        if (type.equals(EnumFile.CSV.name())) {
+            genericFile = new CSVFile("download-csv-localidades.csv", "idEstado,siglaEstado,regiaoNome,nomeCidade,nomeMesorregiao,nomeFormatado");
+        } else if (type.equals(EnumFile.JSON.name())){
+            genericFile = new JSONFile("download-json-localidades.json");
+        } else if (type.equals(EnumFile.XML.name())){
+            // desenvolver
+        }
 
-        response.setContentType("text/csv");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + filename + "\"");
-
-        //create a csv writer
-        StatefulBeanToCsv<Locale> writer = new StatefulBeanToCsvBuilder<Locale>(response.getWriter())
-                .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-                .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
-                .withOrderedResults(false)
-                .build();
-
-        //write all users to csv file
-        writer.write(locales.getBody());
-
+        File file = new AdapterFile(genericFile);
+        OutputStream out = file.getOutputStream(response, locales.getBody());
+        return out;
     }
 
-    @GetMapping("/download/json")
+
+    @GetMapping("/json")
     @ResponseStatus(HttpStatus.FOUND)
     @ApiOperation(value = "Retorna todos os dados da localidade em formato JSON")
     @ApiResponses(value = {
@@ -88,5 +82,4 @@ public class GeographicController {
     public ResponseEntity<List<Locale>> getFileJson() {
         return Postconditions.checkNull(localidadeService.findAllLocalidade());
     }
-
 }
