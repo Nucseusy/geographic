@@ -82,10 +82,10 @@ public class LocalidadeService implements ILocalidadeService {
             states.stream().forEach(state -> {
                 List<Zone> zones = findZonesByState(state.getId());
                 if (!zones.isEmpty()) {
-                    Optional<Zone> zone = zones.stream().filter(obj -> obj.getNome().equals(name)).findAny();
+                    Optional<Zone> zone = zones.stream().filter(obj -> obj.getName().equals(name)).findAny();
                     if (zone.isPresent()) {
                         locale.add(buildLocale(zone.get(), state));
-                        throw new BreakForEachException("Locale found > " + zone.get().getNome());
+                        throw new BreakForEachException("Locale found > " + zone.get().getName());
                     }
                 }
             });
@@ -112,11 +112,11 @@ public class LocalidadeService implements ILocalidadeService {
     private Locale buildLocale(Zone zone, State state) {
         return Locale.builder()
                 .idEstado(String.valueOf(state.getId()))
-                .siglaEstado(state.getSigla())
-                .regiaoNome(state.getRegiao().getNome())
-                .nomeCidade(zone.getNome())
-                .nomeMesorregiao(zone.getMicrorregiao().getMesorregiao().getNome())
-                .nomeFormatado(zone.getNome().concat("/").concat(state.getSigla()))
+                .siglaEstado(state.getInitial())
+                .regiaoNome(state.getRegion().getName())
+                .nomeCidade(zone.getName())
+                .nomeMesorregiao(zone.getMicroRegion().getMesoRegion().getName())
+                .nomeFormatado(zone.getName().concat("/").concat(state.getInitial()))
                 .build();
     }
 
@@ -124,12 +124,12 @@ public class LocalidadeService implements ILocalidadeService {
         List<State> state = new ArrayList<>();
         state.add(State.builder()
                 .id(35)
-                .nome("São Paulo")
-                .sigla("SP")
-                .regiao(Region.builder()
+                .name("São Paulo")
+                .initial("SP")
+                .region(Region.builder()
                         .id(3)
-                        .nome("Sudeste")
-                        .sigla("SE")
+                        .name("Sudeste")
+                        .initial("SE")
                         .build())
                 .build()
         );
@@ -140,13 +140,13 @@ public class LocalidadeService implements ILocalidadeService {
         List<Zone> zone = new ArrayList<>();
         zone.add(Zone.builder()
                 .id(3550308)
-                .nome("São Paulo")
-                .microrregiao(MicroRegion.builder()
+                .name("São Paulo")
+                .microRegion(MicroRegion.builder()
                         .id(35061)
-                        .nome("São Paulo")
-                        .mesorregiao(MesoRegion.builder()
+                        .name("São Paulo")
+                        .mesoRegion(MesoRegion.builder()
                                 .id(3515)
-                                .nome("Metropolitana de São Paulo")
+                                .name("Metropolitana de São Paulo")
                                 .build())
                         .build())
                 .build()

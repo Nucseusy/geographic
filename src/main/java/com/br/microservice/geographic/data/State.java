@@ -1,5 +1,6 @@
 package com.br.microservice.geographic.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,16 +16,13 @@ public class State {
     private Integer id;
 
     @ApiModelProperty(value = "Nome da Unidade da Federação")
-   // @JsonProperty(value = "sigla")
-//    private String initial;
-    private String sigla;
+    @JsonProperty(value = "sigla")
+    private String initial;
 
     @ApiModelProperty(value = "Sigla da Unidade da Federação")
-//    @JsonProperty(value = "nome")
-//    private String name;
-    private String nome;
+    @JsonProperty(value = "nome")
+    private String name;
 
-//    @JsonProperty(value = "regiao")
-//    Region region;
-    Region regiao;
+    @JsonProperty(value = "regiao")
+    Region region;
 }
