@@ -5,9 +5,9 @@ public class CSVFile implements IGenericFile {
     private String fileName;
     private String header;
 
-    public CSVFile(String fileName, String header){
+    public CSVFile(String fileName, String header) {
         setFileName(fileName);
-        setHeader(header);
+        this.header = header;
     }
 
     public void setFileName(String fileName) {
@@ -22,12 +22,6 @@ public class CSVFile implements IGenericFile {
         return this.header;
     }
 
-
-    public void setHeader(String header) {
-        this.header = header;
-    }
-
-
     public String getFooter() {
         return null;
     }
@@ -36,20 +30,8 @@ public class CSVFile implements IGenericFile {
         return ",";
     }
 
-    public String getInitialParameterName() {
-        return null;
-    }
-
-    public String getFinishParameterName() {
-        return null;
-    }
-
-    public String getInitialParameterValue() {
-        return null;
-    }
-
-    public String getFinishParameterValue() {
-        return null;
+    public String getTagDecorator(Object value) {
+        return (String)value;
     }
 
     public String getInitialBlock() {
@@ -58,10 +40,6 @@ public class CSVFile implements IGenericFile {
 
     public String getFinishBlock() {
         return null;
-    }
-
-    public boolean isUseParameterName() {
-        return false;
     }
 
     public String getContentType() {

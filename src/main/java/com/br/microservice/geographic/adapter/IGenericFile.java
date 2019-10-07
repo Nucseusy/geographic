@@ -7,25 +7,15 @@ public interface IGenericFile {
 
     String getHeader();
 
-    void setHeader(String header);
-
     String getFooter();
 
     String getSeparator();
 
-    String getInitialParameterName();
-
-    String getFinishParameterName();
-
-    String getInitialParameterValue();
-
-    String getFinishParameterValue();
+    String getTagDecorator(Object value);
 
     String getInitialBlock();
 
     String getFinishBlock();
-
-    boolean isUseParameterName();
 
     String getContentType();
 

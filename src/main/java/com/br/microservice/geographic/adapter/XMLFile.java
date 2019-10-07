@@ -3,11 +3,9 @@ package com.br.microservice.geographic.adapter;
 public class XMLFile implements IGenericFile {
 
     private String fileName;
-    private String header;
 
     public XMLFile(String fileName){
         setFileName(fileName);
-        setHeader("{");
     }
 
     public void setFileName(String fileName) {
@@ -23,9 +21,6 @@ public class XMLFile implements IGenericFile {
                 "<root> \n";
     }
 
-    public void setHeader(String header) {
-    }
-
     public String getFooter() {
         return "</root>";
     }
@@ -34,34 +29,16 @@ public class XMLFile implements IGenericFile {
         return "\n";
     }
 
-    public String getInitialParameterName() {
-        return "<%s>";
+    public String getTagDecorator(Object value) {
+        return "<%s>".concat((String)value).concat("</%s>");
     }
 
-    public String getFinishParameterName() {
-        return "</%s>";
-    }
-
-    public String getInitialParameterValue() {
-        return "";
-    }
-
-    public String getFinishParameterValue() {
-        return "";
-    }
-
-    @Override
     public String getInitialBlock() {
         return "<element>";
     }
 
-    @Override
     public String getFinishBlock() {
         return "</element>";
-    }
-
-    public boolean isUseParameterName() {
-        return true;
     }
 
     public String getContentType() {

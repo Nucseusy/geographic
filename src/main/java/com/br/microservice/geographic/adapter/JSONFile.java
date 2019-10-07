@@ -3,11 +3,9 @@ package com.br.microservice.geographic.adapter;
 public class JSONFile implements IGenericFile {
 
     private String fileName;
-    private String header;
 
-    public JSONFile(String fileName){
+    public JSONFile(String fileName) {
         setFileName(fileName);
-        setHeader("[{");
     }
 
     public void setFileName(String fileName) {
@@ -19,14 +17,8 @@ public class JSONFile implements IGenericFile {
     }
 
     public String getHeader() {
-        return this.header;
+        return "[{";
     }
-
-
-    public void setHeader(String header) {
-        this.header = header;
-    }
-
 
     public String getFooter() {
         return "}]";
@@ -36,20 +28,12 @@ public class JSONFile implements IGenericFile {
         return ",";
     }
 
-    public String getInitialParameterName() {
-        return " \"%s\": ";
-    }
-
-    public String getFinishParameterName() {
-        return "";
-    }
-
-    public String getInitialParameterValue() {
-        return "\"";
-    }
-
-    public String getFinishParameterValue() {
-        return "\"";
+    public String getTagDecorator(Object value) {
+        if (value instanceof String) {
+            return " \"%s\": \"".concat((String) value).concat("\"");
+        } else {
+            return " \"%s\": ".concat((String) value);
+        }
     }
 
     public String getInitialBlock() {
@@ -58,10 +42,6 @@ public class JSONFile implements IGenericFile {
 
     public String getFinishBlock() {
         return "}";
-    }
-
-    public boolean isUseParameterName() {
-        return true;
     }
 
     public String getContentType() {
