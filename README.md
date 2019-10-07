@@ -20,12 +20,13 @@ c. Os campos do CSV/JSON são:
    - nomeCidade 
    - nomeMesorregiao 
    - nomeFormatado {cidade/UF}
-d. NO CSV, a primeira linha (cabeçalho) contem o nome de cada campo e a(s) linha(s) subsequente(s) contem os valores resultante da consulta a API.
-e. Um enpoint generico retorna um JSON ou CSV (todo preparado para implementar o XML) com todos os dados.
-f. Um endpoint que retorna todos os dados da consulta em formato JSON (sem download).
-g. Um endpoint que envia um parâmetro ("nomeCidade"), e retorna somente o ID da cidade.  
-e. Foi implementado caché no item (d), para que quando o nome de uma cidade for enviado mais de uma vez, evitar a chamada do serviço externo.
-f. O endpoint do CSV/JSON retorna um objeto do tipo "java.io.OutputStream" como saída da transformação.
+d. Diagrama de classes gerado na pasta /uml
+e. NO CSV, a primeira linha (cabeçalho) contem o nome de cada campo e a(s) linha(s) subsequente(s) contem os valores resultante da consulta a API.
+f. Um enpoint generico retorna um JSON ou CSV (todo preparado para implementar o XML) com todos os dados.
+g. Um endpoint que retorna todos os dados da consulta em formato JSON (sem download).
+h. Um endpoint que envia um parâmetro ("nomeCidade"), e retorna somente o ID da cidade.  
+i. Foi implementado caché no item (d), para que quando o nome de uma cidade for enviado mais de uma vez, evitar a chamada do serviço externo.
+j. O endpoint do CSV/JSON retorna um objeto do tipo "java.io.OutputStream" como saída da transformação.
 
 TECNOLOGIA
 ==================================================================
