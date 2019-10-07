@@ -3,7 +3,6 @@ package com.br.microservice.geographic.adapter;
 import com.br.microservice.geographic.data.Locale;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 

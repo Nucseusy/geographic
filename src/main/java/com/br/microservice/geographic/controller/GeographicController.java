@@ -53,10 +53,10 @@ public class GeographicController {
             @ApiResponse(code = 302, message = "Sucesso!")
     }
     )
-    public OutputStream getFileCsv(HttpServletResponse response, @PathVariable("type") EnumFile type) throws Exception {
+    public OutputStream getDownloadFile(HttpServletResponse response, @PathVariable("type") EnumFile type) throws Exception {
         ResponseEntity<List<Locale>> locales = localidadeService.findAllLocalidade();
         IWriteFileAdapter fileAdapter = new WriteFileAdapterImpl();
-        OutputStream out = getFile(fileAdapter, type.name(), response, locales.getBody());
+        OutputStream out = getFileOutput(fileAdapter, type.name(), response, locales.getBody());
         return out;
     }
 
@@ -70,11 +70,11 @@ public class GeographicController {
             @ApiResponse(code = 302, message = "Sucesso!")
     }
     )
-    public ResponseEntity<List<Locale>> getFileJson() {
+    public ResponseEntity<List<Locale>> getJsonLocales() {
         return Postconditions.checkNull(localidadeService.findAllLocalidade());
     }
 
-    private OutputStream getFile(IWriteFileAdapter fileAdapter, String type, HttpServletResponse response, List<Locale> locales) throws Exception {
+    private OutputStream getFileOutput(IWriteFileAdapter fileAdapter, String type, HttpServletResponse response, List<Locale> locales) throws Exception {
         switch (type){
             case "JSON": return fileAdapter.getJson(response, locales);
             case "XML": return fileAdapter.getXML(response, locales);

@@ -25,10 +25,10 @@ public class LocalidadeService implements ILocalidadeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalidadeService.class);
 
     @Value("${uri.states}")
-    private String _uriState;
+    public String _uriState;
 
     @Value("${uri.states}${uri.zone}")
-    private String _uriZone;
+    public String _uriZone;
 
     @Override
     @Cacheable(cacheNames = "states")
@@ -109,7 +109,7 @@ public class LocalidadeService implements ILocalidadeService {
         }
     }
 
-    private Locale buildLocale(Zone zone, State state) {
+    public Locale buildLocale(Zone zone, State state) {
         return Locale.builder()
                 .idEstado(String.valueOf(state.getId()))
                 .siglaEstado(state.getInitial())

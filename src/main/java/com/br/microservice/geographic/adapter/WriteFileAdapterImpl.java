@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class WriteFileAdapterImpl implements IWriteFileAdapter {
+
     WriteFile writeFile = new WriteFile();
 
     private Charset charset = StandardCharsets.UTF_8;
