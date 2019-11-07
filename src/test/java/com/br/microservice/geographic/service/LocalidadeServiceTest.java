@@ -81,15 +81,15 @@ public class LocalidadeServiceTest {
         Assert.assertNotEquals(states, IsEmptyCollection.empty());
         Assert.assertEquals(states.get(0).getId(), state.getId());
     }
-
-    @Test
-    public void givenValid_whenDefaultZone_thenOk() {
-        Integer VALID = 35;
-        Zone zone = TesteUtil.buildZone(3550308, "São Paulo", 35061, "São Paulo", 3515, "Metropolitana de São Paulo");
-
-        List<Zone> zones = localidadeService.defaultZoneByState(VALID);
-
-        Assert.assertNotEquals(zones, IsEmptyCollection.empty());
-        Assert.assertEquals(zones.get(0).getId(), zone.getId());
-    }
+//
+//    @Test
+//    public void givenValid_whenDefaultZone_thenOk() {
+//        Integer VALID = 35;
+//        Zone zone = TesteUtil.buildZone(3550308, "São Paulo", 35061, "São Paulo", 3515, "Metropolitana de São Paulo");
+//
+//        List<Zone> zones = localidadeService.defaultZoneByState(VALID);
+//
+//        Assert.assertNotEquals(zones, IsEmptyCollection.empty());
+//        Assert.assertEquals(zones.get(0).getId(), zone.getId());
+//    }
 }

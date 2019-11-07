@@ -1,6 +1,9 @@
 package com.br.microservice.geographic.service;
 
-import com.br.microservice.geographic.data.*;
+import com.br.microservice.geographic.data.Locale;
+import com.br.microservice.geographic.data.Region;
+import com.br.microservice.geographic.data.State;
+import com.br.microservice.geographic.data.Zone;
 import com.br.microservice.geographic.exception.BreakForEachException;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -46,7 +49,7 @@ public class LocalidadeService implements ILocalidadeService {
     @Cacheable(value = "zonesbystate", key = "#ufId")
     @HystrixCommand(fallbackMethod = "defaultZoneByState", commandProperties = {
             @HystrixProperty(name = "execution.isolation.strategy", value = "SEMAPHORE"),
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000")})
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "500")})
     public List<Zone> findZonesByState(Integer ufId) {
         List<Zone> zones = getApi(_uriZone, HttpMethod.POST, null, new ParameterizedTypeReference<List<Zone>>() {
         }, ufId);
@@ -136,21 +139,7 @@ public class LocalidadeService implements ILocalidadeService {
         return state;
     }
 
-    public List<Zone> defaultZoneByState(Integer ufId) {
-        List<Zone> zone = new ArrayList<>();
-        zone.add(Zone.builder()
-                .id(3550308)
-                .name("São Paulo")
-                .microRegion(MicroRegion.builder()
-                        .id(35061)
-                        .name("São Paulo")
-                        .mesoRegion(MesoRegion.builder()
-                                .id(3515)
-                                .name("Metropolitana de São Paulo")
-                                .build())
-                        .build())
-                .build()
-        );
-        return zone;
+    public List<Zone> defaultZoneByState(Integer ufId, Throwable throwable) throws Throwable {
+        throw throwable;
     }
 }

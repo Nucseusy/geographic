@@ -1,7 +1,10 @@
 package com.br.microservice.geographic.controller;
 
-import com.br.microservice.geographic.adapter.*;
+import com.br.microservice.geographic.adapter.EnumFile;
+import com.br.microservice.geographic.adapter.IWriteFileAdapter;
+import com.br.microservice.geographic.adapter.WriteFileAdapterImpl;
 import com.br.microservice.geographic.data.Locale;
+import com.br.microservice.geographic.data.Zone;
 import com.br.microservice.geographic.exception.Postconditions;
 import com.br.microservice.geographic.service.LocalidadeService;
 import io.swagger.annotations.Api;
@@ -72,6 +75,11 @@ public class GeographicController {
     )
     public ResponseEntity<List<Locale>> getJsonLocales() {
         return Postconditions.checkNull(localidadeService.findAllLocalidade());
+    }
+
+    @GetMapping("/municipio/{id}")
+    public ResponseEntity<List<Zone>> getMunicipios(@PathVariable("id") int id){
+        return new ResponseEntity<>(localidadeService.findZonesByState(id), HttpStatus.FOUND);
     }
 
     private OutputStream getFileOutput(IWriteFileAdapter fileAdapter, String type, HttpServletResponse response, List<Locale> locales) throws Exception {
